@@ -1,0 +1,123 @@
+
+
+
+<% if user_signed_in? %>
+    
+    <div class="dropdown" style="float: right; margin: 0px 100px 0px 0px; color: pink;">
+      <button onclick="myFunction()" class="dropbtn">Menu ▼</button>
+      <div id="myDropdown" class="dropdown-content">
+        <a href="/home/mypage">My Page</a>
+      </div>
+    </div>
+    
+    <br>
+    
+    <div style="float: right;padding: 20px 40px 40px 0px; color: black;><%= button_to "logout", destroy_user_session_path, method: :delete, data: {confirm: "로그아웃 하시겠습니까?"}%></div>
+    <p style="float: right; padding: 20px 20px 20px 0px; color: pink;"></p>
+<%end%>
+
+<br><br><br><br><br>
+
+<div class="container" style="margin: 20px 50px 50px 50px; padding: 30px 30px 30px 30px; width: 92%;">
+
+    <button class="btn btn-sm" style="float: right;"><a href="/write">
+    <img src="<%= image_path 'https://cdn3.iconfinder.com/data/icons/glypho-free/64/pen-checkbox-128.png'%>" style="height: 30px; width: 30px;">
+    <b style="color: black;">Post</b></a>
+    </button>
+
+<br> <br> <br>
+
+<h3><b>Newsfeed</b></h3>
+
+<hr style="background-color: pink; height: 0.5px;">
+
+<% @posts.each do |p| %>
+
+<div class="container" style="margin: 30px 30px 30px 30x;">
+
+    <h4> <b style="font-size: 15px; color: gray;"><%= p.id %></b> <b style="color: pink;"> <%= p.title %> </b> <i class="glyphicon glyphicon-heart" style="color: red;"></i> <b style="font-size: 15px; color: red;"><%= Post.find(p.id).likes.count %></b></h4>
+    <h5><b> <%= p.userName %> </b></h5>
+    <p><%= p.content %></p>
+    <img src="<%= p.image_url %>" style="height: 100px; width: 100px;"> <br>
+    
+    <!-- 내 게시글만 수정 삭제 보이기 (수정해야 됨) -->
+    
+    <% if user_signed_in? %>
+      <% if current_user.id == p.user_id || current_user.email == "admin@email.com"  %>
+        
+        <a href="/destroy/<%= p.id %>" style="float: right; padding-left: 20px;">
+            <button type="submit" class="btn btn-xs" style="color: black;">
+            <i class="glyphicon glyphicon-trash" aria-hidden="true"></i> 삭제</button>
+        </a>
+        
+        <a href="/update/<%= p.id %>" style="float: right; padding-left: 20px;">
+            <button type="submit" class="btn btn-xs" style="color: black;">
+            <i class="glyphicon glyphicon-scissors" aria-hidden="true"></i> 수정</button>
+        </a>
+        
+      <% end %>
+    <% end %>
+    
+    <!---->
+        
+        
+    <form action="/<%= p.id %>/like_create" method="post" style="float: right;">
+        <button type="submit" class="btn btn-xs" style="color: black;">
+        <i class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></i> 좋아요</button>
+    </form>
+
+    <br> <br> 
+
+</div>
+
+    <!-- 댓글 작성 -->
+
+    <div class="container">
+            <form class="form-inline" action="/<%= p.id %>/comment_create" method="post">
+                  <div class="form-group">
+                    <label class="sr-only" for="userName">User Name</label>
+                    <input type="text" class="form-control" name="userName" id="exampleInputEmail3" placeholder="이름">
+                  </div>
+                  <div class="form-group">
+                    <label class="sr-only" for="content">Content</label>
+                    <textarea class="form-control" name="content" placeholder="댓글 내용" style="width: 850px; height: 35px;"></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-sm" style="float: right;"><b style="color: black;">Submit</b></button>
+            </form>
+    </div>
+
+    <!-- 댓글 목록 -->
+
+    <div class="container">
+            <hr style="background-color: gray; height: 0.3px;">
+            
+            <% p.comments.each do |c| %>
+        
+            <p><b style="color: gray;">Comment <%= c.id %></b> <i class="glyphicon glyphicon-heart" style="color: red;"></i> <b style="font-size: 15px; color: red;"><%= Comment.find(c.id).likes.count %></b></h4></p>
+            <p><b><%= c.userName %></b></p>
+            <p><%= c.content %> </p>
+            <a href="<%= p.id %>/comment_destroy/<%= c.id %>" style="float: right; padding-left: 20px;">
+                <button type="submit" class="btn btn-xs" style="color: black;">
+                <i class="glyphicon glyphicon-trash" aria-hidden="true"></i></button>
+            </a>
+            
+            <a href="<%= p.id %>/comment_update/<%= c.id %>" style="float: right; padding-left: 20px;">
+                <button type="submit" class="btn btn-xs" style="color: black;">
+                <i class="glyphicon glyphicon-scissors" aria-hidden="true"></i></button>
+            </a>
+            
+            <form action="/<%= p.id %>/<%= c.id %>/like_create" method="post" style="float: right;">
+                <button type="submit" class="btn btn-xs" style="color: black;">
+                <i class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></i></button>
+            </form>
+            
+            <hr style="background-color: gray; height: 0.3px;">
+        <% end %>
+    </div>
+
+<hr style="background-color: pink; height: 0.5px;">
+
+<% end %>
+
+
+</div>

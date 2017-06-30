@@ -1,0 +1,27 @@
+
+
+<br><br>
+
+<div class="container" style="margin: 20px 50px 50px 50px; padding: 30px 30px 30px 30px; width: 92%;">
+
+<br> 
+
+<h3><b>My Page</b></h3>
+
+<hr style="background-color: pink; height: 0.5px;">
+
+<div class="container" style="text-align: center;">
+    
+    <% if user_signed_in? %>
+        <p><b style="color: pink;">Email</b>: <%= current_user.email %></p>
+        <p><b style="color: pink;">등급</b>: <%= current_user.roles.map(&:name).join(',').titleize %></p>
+        <% if current_user.roles.map(&:name).join(',') == 'admin'%>
+           <%= link_to "AdminPage", '/admin' %>
+        <% end %>
+    <%end%>
+<br>
+    <button class="btn btn-sm" style="background-color: gray;"><a href="/users/edit" style="color: pink; font-weight: bold;">회원정보수정</a></button>
+  <br>
+<br>
+
+</div>
